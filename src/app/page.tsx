@@ -11,6 +11,7 @@ import { generateAmortizationSchedule } from '@/lib/calculator'
 export default function Home() {
   const [result, setResult] = useState<AmortizationResult | null>(null)
   const [currency, setCurrency] = useState('USD')
+  const [comments, setComments] = useState('')
   const { toast } = useToast()
 
   const handleCalculation = useCallback((data: AmortizationResult | null, error?: string) => {
@@ -40,10 +41,12 @@ export default function Home() {
               onCurrencyChange={setCurrency}
               currency={currency}
               generateAmortizationSchedule={generateAmortizationSchedule}
+              comments={comments}
+              onCommentsChange={setComments}
             />
           </div>
           <div id="amortization-results" className="flex flex-col gap-6 lg:col-span-2">
-            <AmortizationDisplay result={result} currency={currency} />
+            <AmortizationDisplay result={result} currency={currency} comments={comments} />
           </div>
         </div>
       </main>

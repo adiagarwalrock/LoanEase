@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calculator, Landmark, PiggyBank, Receipt } from 'lucide-react'
+import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare } from 'lucide-react'
 import type { AmortizationResult, AmortizationEntry } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
 
@@ -25,8 +25,9 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from './ui/separator'
 
 interface AmortizationDisplayProps {
-  result: AmortizationResult | null
+  result: AmortizationResult | null;
   currency: string;
+  comments: string;
 }
 
 const SummaryCard = ({ icon, title, value }: { icon: React.ReactNode, title: string, value: string }) => (
@@ -49,7 +50,7 @@ interface YearlyEntry {
     balance: number;
 }
 
-export function AmortizationDisplay({ result, currency }: AmortizationDisplayProps) {
+export function AmortizationDisplay({ result, currency, comments }: AmortizationDisplayProps) {
   const [view, setView] = useState<'monthly' | 'yearly'>('monthly')
 
   const yearlySchedule: YearlyEntry[] = result ? result.schedule.reduce((acc: YearlyEntry[], entry: AmortizationEntry) => {
@@ -119,6 +120,18 @@ export function AmortizationDisplay({ result, currency }: AmortizationDisplayPro
         </div>
         
         <Separator />
+
+        {comments && (
+          <div id="comments-section" className="space-y-2">
+            <h3 className="font-semibold flex items-center gap-2">
+              <MessageSquare className="w-4 h-4" />
+              Personal Comments
+            </h3>
+            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{comments}</p>
+            <Separator />
+          </div>
+        )}
+
 
         <ScrollArea className="h-96 w-full rounded-md border">
           {view === 'monthly' ? (

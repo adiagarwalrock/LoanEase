@@ -91,7 +91,7 @@ body {
   body * {
     visibility: hidden;
   }
-  #amortization-results, #amortization-results * {
+  #amortization-results, #amortization-results *, #comments-section, #comments-section * {
     visibility: visible;
   }
   #amortization-results {

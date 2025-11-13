@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Banknote, CalendarDays, Percent, Printer } from 'lucide-react'
+import { Banknote, CalendarDays, Percent, Printer, MessageSquare } from 'lucide-react'
 
 import { LoanSchema, type LoanFormValues, type AmortizationResult } from '@/lib/types'
 
@@ -15,15 +15,19 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Slider } from '@/components/ui/slider'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Separator } from './ui/separator'
+import { Textarea } from './ui/textarea'
+
 
 interface LoanFormProps {
   onCalculate: (data: AmortizationResult | null, error?: string) => void;
   currency: string;
   onCurrencyChange: (currency: string) => void;
   generateAmortizationSchedule: (values: LoanFormValues) => { data?: AmortizationResult; error?: string };
+  comments: string;
+  onCommentsChange: (comments: string) => void;
 }
 
-export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmortizationSchedule }: LoanFormProps) {
+export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmortizationSchedule, comments, onCommentsChange }: LoanFormProps) {
   const form = useForm<LoanFormValues>({
     resolver: zodResolver(LoanSchema),
     defaultValues: {
@@ -154,21 +158,36 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
                 </FormItem>
               )}
             />
-             <Separator />
+            <Separator />
             <div className="space-y-2">
-                <FormLabel>Currency</FormLabel>
-                <Select value={currency} onValueChange={onCurrencyChange}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select Currency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="USD">USD ($)</SelectItem>
-                        <SelectItem value="EUR">EUR (€)</SelectItem>
-                        <SelectItem value="GBP">GBP (£)</SelectItem>
-                        <SelectItem value="JPY">JPY (¥)</SelectItem>
-                    </SelectContent>
-                </Select>
+              <FormLabel>Report Settings</FormLabel>
+              <Select value={currency} onValueChange={onCurrencyChange}>
+                  <SelectTrigger>
+                      <SelectValue placeholder="Select Currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                      <SelectItem value="USD">USD ($)</SelectItem>
+                      <SelectItem value="EUR">EUR (€)</SelectItem>
+                      <SelectItem value="GBP">GBP (£)</SelectItem>
+                      <SelectItem value="JPY">JPY (¥)</SelectItem>
+                      <SelectItem value="INR">INR (₹)</SelectItem>
+                  </SelectContent>
+              </Select>
             </div>
+            <FormItem>
+              <FormLabel>Personal Comments</FormLabel>
+              <div className="relative">
+                <MessageSquare className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <FormControl>
+                  <Textarea
+                    placeholder="Add notes for your report..."
+                    className="pl-8"
+                    value={comments}
+                    onChange={(e) => onCommentsChange(e.target.value)}
+                  />
+                </FormControl>
+              </div>
+            </FormItem>
           </CardContent>
           <CardFooter>
             <Button onClick={handlePrint} className="w-full" variant="outline">
