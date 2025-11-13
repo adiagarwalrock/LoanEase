@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock } from 'lucide-react'
+import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock, TrendingDown, TrendingUp } from 'lucide-react'
 import { format } from 'date-fns'
 import type { AmortizationResult, AmortizationEntry } from '@/lib/types'
 import { formatCurrency, cn } from '@/lib/utils'
@@ -76,6 +76,11 @@ export function AmortizationDisplay({ result, currency, comments, isPrintView = 
     yearEntry.balance = entry.balance;
     return acc;
   }, []) : [];
+  
+  const principalPaid = result?.schedule.filter(e => e.paid).reduce((acc, e) => acc + e.principal, 0) ?? 0;
+  const interestPaid = result?.schedule.filter(e => e.paid).reduce((acc, e) => acc + e.interest, 0) ?? 0;
+  const principalRemaining = (result?.schedule[0]?.balance ?? 0) + (result?.schedule[0]?.principal ?? 0) - principalPaid;
+  const interestRemaining = (result?.totalInterest ?? 0) - interestPaid;
 
   if (!result && !isPrintView) {
     return (
@@ -171,7 +176,7 @@ export function AmortizationDisplay({ result, currency, comments, isPrintView = 
         </div>
       </CardHeader>
       <CardContent className="grid gap-6">
-        <div className="flex flex-wrap gap-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <SummaryCard 
                 icon={<Receipt className="h-4 w-4 text-muted-foreground" />}
                 title="Monthly Payment"
@@ -186,6 +191,26 @@ export function AmortizationDisplay({ result, currency, comments, isPrintView = 
                 icon={<Landmark className="h-4 w-4 text-muted-foreground" />}
                 title="Total Cost"
                 value={formatCurrency(result.totalPayment, currency)}
+            />
+            <SummaryCard 
+                icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+                title="Principal Paid"
+                value={formatCurrency(principalPaid, currency)}
+            />
+             <SummaryCard 
+                icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+                title="Interest Paid"
+                value={formatCurrency(interestPaid, currency)}
+            />
+             <SummaryCard 
+                icon={<TrendingDown className="h-4 w-4 text-muted-foreground" />}
+                title="Principal Remaining"
+                value={formatCurrency(principalRemaining, currency)}
+            />
+            <SummaryCard 
+                icon={<TrendingDown className="h-4 w-4 text-muted-foreground" />}
+                title="Interest Remaining"
+                value={formatCurrency(interestRemaining, currency)}
             />
         </div>
         
