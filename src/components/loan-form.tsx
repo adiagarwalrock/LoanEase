@@ -35,23 +35,26 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
     mode: 'onChange'
   })
 
-  const watchedValues = form.watch();
-
   useEffect(() => {
-    const { success } = LoanSchema.safeParse(watchedValues);
-    if (success) {
-      const result = generateAmortizationSchedule(watchedValues);
-      onCalculate(result.data ?? null, result.error);
-    } else {
+    const subscription = form.watch((watchedValues) => {
+      const { success } = LoanSchema.safeParse(watchedValues);
+      if (success) {
+        const result = generateAmortizationSchedule(watchedValues as LoanFormValues);
+        onCalculate(result.data ?? null, result.error);
+      } else {
         const validation = LoanSchema.safeParse(watchedValues);
         if (!validation.success) {
             const firstError = Object.values(validation.error.flatten().fieldErrors)[0]?.[0];
             if(firstError) {
               onCalculate(null, firstError);
+            } else {
+              onCalculate(null, "Please check your inputs.");
             }
         }
-    }
-  }, [watchedValues, onCalculate, generateAmortizationSchedule]);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form.watch, onCalculate, generateAmortizationSchedule]);
 
   const handlePrint = () => {
     window.print();
