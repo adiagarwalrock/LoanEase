@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import type { AmortizationResult } from '@/lib/types'
 import { LoanForm } from '@/components/loan-form'
 import { AmortizationDisplay } from '@/components/amortization-display'
@@ -13,7 +13,7 @@ export default function Home() {
   const [currency, setCurrency] = useState('USD')
   const { toast } = useToast()
 
-  const handleCalculation = (data: AmortizationResult | null, error?: string) => {
+  const handleCalculation = useCallback((data: AmortizationResult | null, error?: string) => {
     if (error) {
       setResult(null)
       toast({
@@ -24,7 +24,7 @@ export default function Home() {
     } else {
       setResult(data)
     }
-  }
+  }, [toast])
 
   return (
     <div className="flex min-h-screen w-full flex-col">
