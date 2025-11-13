@@ -3,11 +3,15 @@
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Banknote, CalendarDays, Percent, Printer, MessageSquare } from 'lucide-react'
+import { Banknote, CalendarDays, Percent, Printer, MessageSquare, Calendar as CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
 
 import { LoanSchema, type LoanFormValues, type AmortizationResult } from '@/lib/types'
+import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -36,30 +40,30 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
       interestRate: 5,
       loanTerm: 30,
       interestType: 'compound',
+      startDate: new Date(),
     },
     mode: 'onChange'
   })
 
   useEffect(() => {
     const subscription = form.watch((watchedValues) => {
-      const { success } = LoanSchema.safeParse(watchedValues);
-      if (success) {
-        const result = generateAmortizationSchedule(watchedValues as LoanFormValues);
-        onCalculate(result.data ?? null, result.error);
+      const result = generateAmortizationSchedule(watchedValues as LoanFormValues);
+      if (result.error) {
+        onCalculate(null, result.error);
       } else {
-        const validation = LoanSchema.safeParse(watchedValues);
-        if (!validation.success) {
-            const firstError = Object.values(validation.error.flatten().fieldErrors)[0]?.[0];
-            if(firstError) {
-              onCalculate(null, firstError);
-            } else {
-              onCalculate(null, "Please check your inputs.");
-            }
-        }
+        onCalculate(result.data ?? null);
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, onCalculate, generateAmortizationSchedule]);
+  }, [form.watch, onCalculate, generateAmortizationSchedule]);
+
+  // Trigger initial calculation
+  useEffect(() => {
+    const result = generateAmortizationSchedule(form.getValues());
+    if (result.data) {
+      onCalculate(result.data);
+    }
+  }, []);
 
   return (
     <Card>
@@ -121,6 +125,44 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
                       />
                     </FormControl>
                   </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="startDate"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Loan Start Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}

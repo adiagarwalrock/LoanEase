@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock } from 'lucide-react'
+import { format } from 'date-fns'
 import type { AmortizationResult, AmortizationEntry } from '@/lib/types'
 import { formatCurrency, cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 
 import {
   Card,
@@ -56,6 +58,7 @@ export function AmortizationDisplay({ result, currency, comments, isPrintView = 
   const [reportDate, setReportDate] = useState<string>('');
 
   useEffect(() => {
+    // This will run only on the client, preventing hydration mismatch
     setReportDate(new Date().toLocaleString());
   }, [result]);
 
@@ -100,6 +103,7 @@ export function AmortizationDisplay({ result, currency, comments, isPrintView = 
       <TableHeader className={cn(!isPrintView && "sticky top-0 bg-muted")}>
         <TableRow>
           <TableHead className="w-[80px]">Month</TableHead>
+          <TableHead>Date</TableHead>
           <TableHead className="text-right">Payment</TableHead>
           <TableHead className="text-right">Principal</TableHead>
           <TableHead className="text-right">Interest</TableHead>
@@ -108,8 +112,14 @@ export function AmortizationDisplay({ result, currency, comments, isPrintView = 
       </TableHeader>
       <TableBody>
         {result.schedule.map((entry) => (
-          <TableRow key={entry.month}>
+          <TableRow key={entry.month} className={cn(entry.paid && 'bg-secondary/40')}>
             <TableCell className="font-medium">{entry.month}</TableCell>
+            <TableCell>
+                <div className="flex items-center gap-2">
+                    <span>{format(entry.paymentDate, "MMM yyyy")}</span>
+                    {entry.paid && <Badge variant="secondary">Paid</Badge>}
+                </div>
+            </TableCell>
             <TableCell className="text-right">{formatCurrency(entry.payment, currency)}</TableCell>
             <TableCell className="text-right">{formatCurrency(entry.principal, currency)}</TableCell>
             <TableCell className="text-right text-destructive/80">{formatCurrency(entry.interest, currency)}</TableCell>
@@ -152,7 +162,7 @@ export function AmortizationDisplay({ result, currency, comments, isPrintView = 
                 <CardTitle>Amortization Results</CardTitle>
                 <CardDescription>A detailed breakdown of your loan payments over time.</CardDescription>
             </div>
-            <Tabs defaultValue="monthly" onValueChange={(value) => setView(value as 'monthly' | 'yearly')} className={cn(isPrintView && "print-hidden")}>
+            <Tabs defaultValue="monthly" onValueChange={(value) => setView(value as 'monthly' | 'yearly')} className={cn(isPrintView && "hidden")}>
               <TabsList>
                 <TabsTrigger value="monthly">Monthly</TabsTrigger>
                 <TabsTrigger value="yearly">Yearly</TabsTrigger>

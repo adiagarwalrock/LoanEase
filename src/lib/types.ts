@@ -5,6 +5,7 @@ export const LoanSchema = z.object({
   interestRate: z.coerce.number().positive({ message: 'Interest rate must be a positive number.' }),
   loanTerm: z.coerce.number().int().positive({ message: 'Loan term must be a positive number of years.' }),
   interestType: z.enum(['compound', 'simple']),
+  startDate: z.date().optional(),
 });
 
 export type LoanFormValues = z.infer<typeof LoanSchema>;
@@ -15,6 +16,8 @@ export interface AmortizationEntry {
   principal: number;
   interest: number;
   balance: number;
+  paymentDate: Date;
+  paid: boolean;
 }
 
 export interface AmortizationResult {

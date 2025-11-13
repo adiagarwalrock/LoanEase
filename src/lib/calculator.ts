@@ -1,5 +1,6 @@
 'use client'
 
+import { addMonths } from 'date-fns';
 import { LoanSchema, type LoanFormValues, type AmortizationResult, type ActionResult } from '@/lib/types';
 
 export function generateAmortizationSchedule(formData: LoanFormValues): ActionResult {
@@ -10,10 +11,12 @@ export function generateAmortizationSchedule(formData: LoanFormValues): ActionRe
     return { error: firstError || 'Invalid input. Please check the form fields.' };
   }
 
-  const { principal, interestRate, loanTerm, interestType } = validatedFields.data;
+  const { principal, interestRate, loanTerm, interestType, startDate } = validatedFields.data;
 
   const annualRate = interestRate / 100;
   const months = loanTerm * 12;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Normalize today's date
 
   let schedule: AmortizationResult['schedule'] = [];
   let monthlyPayment: number;
@@ -33,6 +36,7 @@ export function generateAmortizationSchedule(formData: LoanFormValues): ActionRe
       let totalInterestPaid = 0;
 
       for (let i = 1; i <= months; i++) {
+        const paymentDate = startDate ? addMonths(startDate, i) : addMonths(today, i);
         const interestPaid = balance * monthlyRate;
         const principalPaid = monthlyPayment - interestPaid;
         balance -= principalPaid;
@@ -44,6 +48,8 @@ export function generateAmortizationSchedule(formData: LoanFormValues): ActionRe
           principal: principalPaid,
           interest: interestPaid,
           balance: balance > 0 ? balance : 0,
+          paymentDate: paymentDate,
+          paid: paymentDate < today,
         });
       }
       totalPayment = monthlyPayment * months;
@@ -57,6 +63,7 @@ export function generateAmortizationSchedule(formData: LoanFormValues): ActionRe
 
       let balance = principal;
       for (let i = 1; i <= months; i++) {
+        const paymentDate = startDate ? addMonths(startDate, i) : addMonths(today, i);
         balance -= monthlyPrincipal;
         schedule.push({
           month: i,
@@ -64,6 +71,8 @@ export function generateAmortizationSchedule(formData: LoanFormValues): ActionRe
           principal: monthlyPrincipal,
           interest: monthlyInterest,
           balance: balance > 0 ? balance : 0,
+          paymentDate: paymentDate,
+          paid: paymentDate < today,
         });
       }
     }
