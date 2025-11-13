@@ -54,7 +54,7 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch, onCalculate, generateAmortizationSchedule]);
+  }, [form, onCalculate, generateAmortizationSchedule]);
 
   const handlePrint = () => {
     window.print();
@@ -107,8 +107,8 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Loan Term (Years): {field.value}</FormLabel>
-                  <div className="relative flex items-center gap-4">
-                    <CalendarDays className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                   <div className="relative flex items-center">
+                    <CalendarDays className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <FormControl>
                       <Slider
                         min={1}
@@ -116,7 +116,7 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
                         step={1}
                         value={[field.value]}
                         onValueChange={(value) => field.onChange(value[0])}
-                        className="py-2"
+                        className="py-2 pl-8"
                       />
                     </FormControl>
                   </div>

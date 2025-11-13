@@ -91,16 +91,13 @@ body {
   body * {
     visibility: hidden;
   }
-  main > div > div:last-child > div, main > div > div:last-child > div * {
+  #amortization-results, #amortization-results * {
     visibility: visible;
   }
-  main > div > div:last-child > div {
+  #amortization-results {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-  }
-  header, footer {
-    display: none;
   }
 }

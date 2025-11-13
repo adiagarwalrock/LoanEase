@@ -28,13 +28,13 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur-sm px-4 md:px-6">
+      <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/95 backdrop-blur-sm px-4 md:px-6 print:hidden">
         <Logo />
         <h1 className="text-2xl font-bold text-foreground tracking-tight">LoanEase</h1>
       </header>
-      <main className="flex-1 bg-muted/40">
-        <div className="mx-auto grid w-full max-w-7xl items-start gap-6 p-4 md:grid-cols-2 md:p-8 lg:grid-cols-3">
-          <div className="flex flex-col gap-6 lg:col-span-1">
+      <main className="flex-1 bg-muted/40 print:bg-white">
+        <div className="mx-auto grid w-full max-w-7xl items-start gap-6 p-4 md:grid-cols-2 md:p-8 lg:grid-cols-3 print:block">
+          <div className="flex flex-col gap-6 lg:col-span-1 print:hidden">
             <LoanForm 
               onCalculate={handleCalculation} 
               onCurrencyChange={setCurrency}
@@ -42,12 +42,12 @@ export default function Home() {
               generateAmortizationSchedule={generateAmortizationSchedule}
             />
           </div>
-          <div className="flex flex-col gap-6 lg:col-span-2">
+          <div id="amortization-results" className="flex flex-col gap-6 lg:col-span-2">
             <AmortizationDisplay result={result} currency={currency} />
           </div>
         </div>
       </main>
-      <footer className="border-t py-4 text-center text-sm text-muted-foreground">
+      <footer className="border-t py-4 text-center text-sm text-muted-foreground print:hidden">
         <p>Built with ❤️ by an expert AI engineer.</p>
       </footer>
     </div>
