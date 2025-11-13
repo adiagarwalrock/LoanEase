@@ -25,9 +25,10 @@ interface LoanFormProps {
   generateAmortizationSchedule: (values: LoanFormValues) => { data?: AmortizationResult; error?: string };
   comments: string;
   onCommentsChange: (comments: string) => void;
+  onPrint: () => void;
 }
 
-export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmortizationSchedule, comments, onCommentsChange }: LoanFormProps) {
+export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmortizationSchedule, comments, onCommentsChange, onPrint }: LoanFormProps) {
   const form = useForm<LoanFormValues>({
     resolver: zodResolver(LoanSchema),
     defaultValues: {
@@ -59,10 +60,6 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
     });
     return () => subscription.unsubscribe();
   }, [form, onCalculate, generateAmortizationSchedule]);
-
-  const handlePrint = () => {
-    window.print();
-  };
 
   return (
     <Card>
@@ -190,7 +187,7 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
             </FormItem>
           </CardContent>
           <CardFooter>
-            <Button onClick={handlePrint} className="w-full" variant="outline">
+            <Button onClick={onPrint} className="w-full" variant="outline">
               <Printer className="mr-2 h-4 w-4" />
               Print / Save as PDF
             </Button>

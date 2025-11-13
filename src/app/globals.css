@@ -92,54 +92,49 @@ body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  
-  body * {
-    visibility: hidden;
+  .print-only {
+    display: block !important;
   }
-  #amortization-results, #amortization-results * {
-    visibility: visible;
+  .print-hidden {
+    display: none !important;
   }
-  #amortization-results {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+  body > *:not(.print-only) {
+    display: none !important;
+  }
+  .print-container {
     padding: 1rem;
     --card-foreground: black;
     --muted-foreground: #333;
     --destructive: #c00;
   }
-  #amortization-results .print-hidden {
-    display: none;
-  }
-  #amortization-results .text-destructive\/80 {
+  .print-container .text-destructive\/80 {
     color: var(--destructive);
   }
-  #amortization-results .flex-wrap {
+  .print-container .flex-wrap {
     flex-wrap: nowrap;
   }
-  #amortization-results [class*="gap-"] {
+  .print-container [class*="gap-"] {
     gap: 0.5rem;
   }
-  #amortization-results .p-6 {
+  .print-container .p-6 {
     padding: 1rem;
   }
-  #amortization-results .pb-2 {
+  .print-container .pb-2 {
     padding-bottom: 0.25rem;
   }
-  #amortization-results .h-96 {
+  .print-container .h-96 {
     height: auto !important;
   }
-  #amortization-results .border {
+  .print-container .border {
     border: 0;
   }
-  #amortization-results .sticky {
+  .print-container .sticky {
     position: static;
   }
-  #amortization-results .p-4 {
+  .print-container .p-4 {
     padding: 0.25rem 0.5rem;
   }
-  #amortization-results .h-12 {
+  .print-container .h-12 {
     height: auto;
   }
 }

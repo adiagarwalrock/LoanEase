@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock } from 'lucide-react'
 import type { AmortizationResult, AmortizationEntry } from '@/lib/types'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, cn } from '@/lib/utils'
 
 import {
   Card,
@@ -28,6 +28,7 @@ interface AmortizationDisplayProps {
   result: AmortizationResult | null;
   currency: string;
   comments: string;
+  isPrintView?: boolean;
 }
 
 const SummaryCard = ({ icon, title, value }: { icon: React.ReactNode, title: string, value: string }) => (
@@ -50,7 +51,7 @@ interface YearlyEntry {
     balance: number;
 }
 
-export function AmortizationDisplay({ result, currency, comments }: AmortizationDisplayProps) {
+export function AmortizationDisplay({ result, currency, comments, isPrintView = false }: AmortizationDisplayProps) {
   const [view, setView] = useState<'monthly' | 'yearly'>('monthly')
   const [reportDate, setReportDate] = useState<string>('');
 
@@ -73,7 +74,7 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
     return acc;
   }, []) : [];
 
-  if (!result) {
+  if (!result && !isPrintView) {
     return (
       <Card className="min-h-[400px]">
         <CardHeader>
@@ -89,9 +90,61 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
       </Card>
     )
   }
+  
+  if (!result) {
+    return null;
+  }
+
+  const ScheduleTable = isPrintView || view === 'monthly' ? (
+    <Table>
+      <TableHeader className={cn(!isPrintView && "sticky top-0 bg-muted")}>
+        <TableRow>
+          <TableHead className="w-[80px]">Month</TableHead>
+          <TableHead className="text-right">Payment</TableHead>
+          <TableHead className="text-right">Principal</TableHead>
+          <TableHead className="text-right">Interest</TableHead>
+          <TableHead className="text-right">Balance</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {result.schedule.map((entry) => (
+          <TableRow key={entry.month}>
+            <TableCell className="font-medium">{entry.month}</TableCell>
+            <TableCell className="text-right">{formatCurrency(entry.payment, currency)}</TableCell>
+            <TableCell className="text-right">{formatCurrency(entry.principal, currency)}</TableCell>
+            <TableCell className="text-right text-destructive/80">{formatCurrency(entry.interest, currency)}</TableCell>
+            <TableCell className="text-right font-medium">{formatCurrency(entry.balance, currency)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  ) : (
+      <Table>
+      <TableHeader className="sticky top-0 bg-muted">
+        <TableRow>
+          <TableHead className="w-[80px]">Year</TableHead>
+          <TableHead className="text-right">Total Payment</TableHead>
+          <TableHead className="text-right">Principal</TableHead>
+          <TableHead className="text-right">Interest</TableHead>
+          <TableHead className="text-right">Ending Balance</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {yearlySchedule.map((entry) => (
+          <TableRow key={entry.year}>
+            <TableCell className="font-medium">{entry.year}</TableCell>
+            <TableCell className="text-right">{formatCurrency(entry.payment, currency)}</TableCell>
+            <TableCell className="text-right">{formatCurrency(entry.principal, currency)}</TableCell>
+            <TableCell className="text-right text-destructive/80">{formatCurrency(entry.interest, currency)}</TableCell>
+            <TableCell className="text-right font-medium">{formatCurrency(entry.balance, currency)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
 
   return (
-    <div id="amortization-results">
+    <div id={isPrintView ? '' : 'amortization-results'}>
     <Card>
       <CardHeader>
         <div className="flex justify-between items-start">
@@ -99,7 +152,7 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
                 <CardTitle>Amortization Results</CardTitle>
                 <CardDescription>A detailed breakdown of your loan payments over time.</CardDescription>
             </div>
-            <Tabs defaultValue="monthly" onValueChange={(value) => setView(value as 'monthly' | 'yearly')} className="print-hidden">
+            <Tabs defaultValue="monthly" onValueChange={(value) => setView(value as 'monthly' | 'yearly')} className={cn(isPrintView && "print-hidden")}>
               <TabsList>
                 <TabsTrigger value="monthly">Monthly</TabsTrigger>
                 <TabsTrigger value="yearly">Yearly</TabsTrigger>
@@ -149,56 +202,11 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
         
         <Separator />
 
-
-        <ScrollArea className="h-96 w-full rounded-md border">
-          {view === 'monthly' ? (
-            <Table>
-              <TableHeader className="sticky top-0 bg-muted">
-                <TableRow>
-                  <TableHead className="w-[80px]">Month</TableHead>
-                  <TableHead className="text-right">Payment</TableHead>
-                  <TableHead className="text-right">Principal</TableHead>
-                  <TableHead className="text-right">Interest</TableHead>
-                  <TableHead className="text-right">Balance</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {result.schedule.map((entry) => (
-                  <TableRow key={entry.month}>
-                    <TableCell className="font-medium">{entry.month}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(entry.payment, currency)}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(entry.principal, currency)}</TableCell>
-                    <TableCell className="text-right text-destructive/80">{formatCurrency(entry.interest, currency)}</TableCell>
-                    <TableCell className="text-right font-medium">{formatCurrency(entry.balance, currency)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          ) : (
-             <Table>
-              <TableHeader className="sticky top-0 bg-muted">
-                <TableRow>
-                  <TableHead className="w-[80px]">Year</TableHead>
-                  <TableHead className="text-right">Total Payment</TableHead>
-                  <TableHead className="text-right">Principal</TableHead>
-                  <TableHead className="text-right">Interest</TableHead>
-                  <TableHead className="text-right">Ending Balance</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {yearlySchedule.map((entry) => (
-                  <TableRow key={entry.year}>
-                    <TableCell className="font-medium">{entry.year}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(entry.payment, currency)}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(entry.principal, currency)}</TableCell>
-                    <TableCell className="text-right text-destructive/80">{formatCurrency(entry.interest, currency)}</TableCell>
-                    <TableCell className="text-right font-medium">{formatCurrency(entry.balance, currency)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </ScrollArea>
+        {isPrintView ? ScheduleTable : (
+          <ScrollArea className="h-96 w-full rounded-md border">
+            {ScheduleTable}
+          </ScrollArea>
+        )}
       </CardContent>
     </Card>
     </div>
