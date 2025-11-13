@@ -7,7 +7,6 @@ import { AmortizationDisplay } from '@/components/amortization-display'
 import { Logo } from '@/components/logo'
 import { useToast } from '@/hooks/use-toast'
 import { generateAmortizationSchedule } from '@/lib/calculator'
-import { useReactToPrint } from 'react-to-print';
 
 export default function Home() {
   const [result, setResult] = useState<AmortizationResult | null>(null)
@@ -17,10 +16,9 @@ export default function Home() {
 
   const printRef = useRef<HTMLDivElement>(null);
 
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-    documentTitle: 'Amortization_Schedule',
-  });
+  const handlePrint = () => {
+    window.print();
+  };
 
   const handleCalculation = useCallback((data: AmortizationResult | null, error?: string) => {
     if (error) {
