@@ -24,6 +24,7 @@ import { Separator } from './ui/separator'
 
 interface AmortizationDisplayProps {
   result: AmortizationResult | null
+  currency: string;
 }
 
 const SummaryCard = ({ icon, title, value }: { icon: React.ReactNode, title: string, value: string }) => (
@@ -38,7 +39,7 @@ const SummaryCard = ({ icon, title, value }: { icon: React.ReactNode, title: str
   </Card>
 );
 
-export function AmortizationDisplay({ result }: AmortizationDisplayProps) {
+export function AmortizationDisplay({ result, currency }: AmortizationDisplayProps) {
   if (!result) {
     return (
       <Card className="min-h-[400px]">
@@ -49,7 +50,7 @@ export function AmortizationDisplay({ result }: AmortizationDisplayProps) {
         <CardContent className="flex h-[calc(100%-7.5rem)] items-center justify-center">
           <div className="text-center text-muted-foreground">
             <Calculator className="mx-auto h-12 w-12" />
-            <p className="mt-4">Fill out the form to get started.</p>
+            <p className="mt-4">Adjust the form to see your schedule.</p>
           </div>
         </CardContent>
       </Card>
@@ -67,17 +68,17 @@ export function AmortizationDisplay({ result }: AmortizationDisplayProps) {
             <SummaryCard 
                 icon={<Receipt className="h-4 w-4 text-muted-foreground" />}
                 title="Monthly Payment"
-                value={formatCurrency(result.monthlyPayment)}
+                value={formatCurrency(result.monthlyPayment, currency)}
             />
             <SummaryCard 
                 icon={<PiggyBank className="h-4 w-4 text-muted-foreground" />}
                 title="Total Interest"
-                value={formatCurrency(result.totalInterest)}
+                value={formatCurrency(result.totalInterest, currency)}
             />
             <SummaryCard 
                 icon={<Landmark className="h-4 w-4 text-muted-foreground" />}
                 title="Total Cost"
-                value={formatCurrency(result.totalPayment)}
+                value={formatCurrency(result.totalPayment, currency)}
             />
         </div>
         
@@ -98,10 +99,10 @@ export function AmortizationDisplay({ result }: AmortizationDisplayProps) {
               {result.schedule.map((entry) => (
                 <TableRow key={entry.month}>
                   <TableCell className="font-medium">{entry.month}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(entry.payment)}</TableCell>
-                  <TableCell className="text-right">{formatCurrency(entry.principal)}</TableCell>
-                  <TableCell className="text-right text-destructive/80">{formatCurrency(entry.interest)}</TableCell>
-                  <TableCell className="text-right font-medium">{formatCurrency(entry.balance)}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(entry.payment, currency)}</TableCell>
+                  <TableCell className="text-right">{formatCurrency(entry.principal, currency)}</TableCell>
+                  <TableCell className="text-right text-destructive/80">{formatCurrency(entry.interest, currency)}</TableCell>
+                  <TableCell className="text-right font-medium">{formatCurrency(entry.balance, currency)}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

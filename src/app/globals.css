@@ -86,3 +86,21 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  main > div > div:last-child > div, main > div > div:last-child > div * {
+    visibility: visible;
+  }
+  main > div > div:last-child > div {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  header, footer {
+    display: none;
+  }
+}

@@ -1,12 +1,13 @@
-'use server'
+'use client'
 
 import { LoanSchema, type LoanFormValues, type AmortizationResult, type ActionResult } from '@/lib/types';
 
-export async function generateAmortizationSchedule(formData: LoanFormValues): Promise<ActionResult> {
+export function generateAmortizationSchedule(formData: LoanFormValues): ActionResult {
   const validatedFields = LoanSchema.safeParse(formData);
 
   if (!validatedFields.success) {
-    return { error: 'Invalid input. Please check the form fields.' };
+    const firstError = Object.values(validatedFields.error.flatten().fieldErrors)[0]?.[0];
+    return { error: firstError || 'Invalid input. Please check the form fields.' };
   }
 
   const { principal, interestRate, loanTerm, interestType } = validatedFields.data;
@@ -65,6 +66,10 @@ export async function generateAmortizationSchedule(formData: LoanFormValues): Pr
           balance: balance > 0 ? balance : 0,
         });
       }
+    }
+
+    if (isNaN(monthlyPayment) || !isFinite(monthlyPayment)) {
+      return { error: 'Could not calculate monthly payment. Check your inputs.'}
     }
 
     return {
