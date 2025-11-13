@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock } from 'lucide-react'
 import type { AmortizationResult, AmortizationEntry } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
 
@@ -52,6 +52,12 @@ interface YearlyEntry {
 
 export function AmortizationDisplay({ result, currency, comments }: AmortizationDisplayProps) {
   const [view, setView] = useState<'monthly' | 'yearly'>('monthly')
+  const [reportDate, setReportDate] = useState<string>('');
+
+  useEffect(() => {
+    setReportDate(new Date().toLocaleString());
+  }, [result]);
+
 
   const yearlySchedule: YearlyEntry[] = result ? result.schedule.reduce((acc: YearlyEntry[], entry: AmortizationEntry) => {
     const year = Math.ceil(entry.month / 12);
@@ -120,17 +126,27 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
         </div>
         
         <Separator />
+        
+        <div className="space-y-2">
+            <h3 className="font-semibold flex items-center gap-2">
+              <CalendarClock className="w-4 h-4" />
+              Report Generated
+            </h3>
+            <p className="text-sm text-muted-foreground">{reportDate}</p>
+          </div>
 
         {comments && (
           <div id="comments-section" className="space-y-2">
+            <Separator />
             <h3 className="font-semibold flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
               Personal Comments
             </h3>
             <p className="text-sm text-muted-foreground whitespace-pre-wrap">{comments}</p>
-            <Separator />
           </div>
         )}
+        
+        <Separator />
 
 
         <ScrollArea className="h-96 w-full rounded-md border">
