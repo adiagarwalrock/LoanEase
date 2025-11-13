@@ -34,8 +34,8 @@ export default function Home() {
         <h1 className="text-2xl font-bold text-foreground tracking-tight">LoanEase</h1>
       </header>
       <main className="flex-1 bg-muted/40 print:bg-white">
-        <div className="mx-auto grid w-full max-w-7xl items-start gap-6 p-4 md:grid-cols-2 md:p-8 lg:grid-cols-3 print:block">
-          <div className="flex flex-col gap-6 lg:col-span-1 print:hidden">
+        <div className="mx-auto grid w-full max-w-7xl items-start gap-6 p-4 md:grid-cols-2 md:p-8 lg:grid-cols-3 print:hidden">
+          <div className="flex flex-col gap-6 lg:col-span-1">
             <LoanForm 
               onCalculate={handleCalculation} 
               onCurrencyChange={setCurrency}
@@ -45,7 +45,7 @@ export default function Home() {
               onCommentsChange={setComments}
             />
           </div>
-          <div id="amortization-results" className="flex flex-col gap-6 lg:col-span-2">
+          <div className="flex flex-col gap-6 lg:col-span-2">
             <AmortizationDisplay result={result} currency={currency} comments={comments} />
           </div>
         </div>

@@ -88,10 +88,15 @@ body {
 }
 
 @media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
   body * {
     visibility: hidden;
   }
-  #amortization-results, #amortization-results *, #comments-section, #comments-section * {
+  #amortization-results, #amortization-results * {
     visibility: visible;
   }
   #amortization-results {
@@ -99,5 +104,42 @@ body {
     left: 0;
     top: 0;
     width: 100%;
+    padding: 1rem;
+    --card-foreground: black;
+    --muted-foreground: #333;
+    --destructive: #c00;
+  }
+  #amortization-results .print-hidden {
+    display: none;
+  }
+  #amortization-results .text-destructive\/80 {
+    color: var(--destructive);
+  }
+  #amortization-results .flex-wrap {
+    flex-wrap: nowrap;
+  }
+  #amortization-results [class*="gap-"] {
+    gap: 0.5rem;
+  }
+  #amortization-results .p-6 {
+    padding: 1rem;
+  }
+  #amortization-results .pb-2 {
+    padding-bottom: 0.25rem;
+  }
+  #amortization-results .h-96 {
+    height: auto !important;
+  }
+  #amortization-results .border {
+    border: 0;
+  }
+  #amortization-results .sticky {
+    position: static;
+  }
+  #amortization-results .p-4 {
+    padding: 0.25rem 0.5rem;
+  }
+  #amortization-results .h-12 {
+    height: auto;
   }
 }

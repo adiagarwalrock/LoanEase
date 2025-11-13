@@ -91,6 +91,7 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
   }
 
   return (
+    <div id="amortization-results">
     <Card>
       <CardHeader>
         <div className="flex justify-between items-start">
@@ -98,7 +99,7 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
                 <CardTitle>Amortization Results</CardTitle>
                 <CardDescription>A detailed breakdown of your loan payments over time.</CardDescription>
             </div>
-            <Tabs defaultValue="monthly" onValueChange={(value) => setView(value as 'monthly' | 'yearly')} className="print:hidden">
+            <Tabs defaultValue="monthly" onValueChange={(value) => setView(value as 'monthly' | 'yearly')} className="print-hidden">
               <TabsList>
                 <TabsTrigger value="monthly">Monthly</TabsTrigger>
                 <TabsTrigger value="yearly">Yearly</TabsTrigger>
@@ -149,10 +150,10 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
         <Separator />
 
 
-        <ScrollArea className="h-96 w-full rounded-md border print:h-auto print:border-0">
+        <ScrollArea className="h-96 w-full rounded-md border">
           {view === 'monthly' ? (
             <Table>
-              <TableHeader className="sticky top-0 bg-muted print:static">
+              <TableHeader className="sticky top-0 bg-muted">
                 <TableRow>
                   <TableHead className="w-[80px]">Month</TableHead>
                   <TableHead className="text-right">Payment</TableHead>
@@ -175,7 +176,7 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
             </Table>
           ) : (
              <Table>
-              <TableHeader className="sticky top-0 bg-muted print:static">
+              <TableHeader className="sticky top-0 bg-muted">
                 <TableRow>
                   <TableHead className="w-[80px]">Year</TableHead>
                   <TableHead className="text-right">Total Payment</TableHead>
@@ -200,5 +201,6 @@ export function AmortizationDisplay({ result, currency, comments }: Amortization
         </ScrollArea>
       </CardContent>
     </Card>
+    </div>
   )
 }
