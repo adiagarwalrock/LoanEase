@@ -124,6 +124,7 @@ body {
   }
   .print-container .h-96 {
     height: auto !important;
+    overflow-y: visible !important;
   }
   .print-container .border {
     border: 0;
