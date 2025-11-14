@@ -40,10 +40,15 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
       interestRate: 5,
       loanTerm: 30,
       interestType: 'compound',
-      startDate: new Date(),
+      startDate: undefined,
     },
     mode: 'onChange'
   })
+
+  useEffect(() => {
+    // Set start date on client to avoid hydration mismatch
+    form.setValue('startDate', new Date());
+  }, [form.setValue]);
 
   useEffect(() => {
     const subscription = form.watch((watchedValues) => {
@@ -55,15 +60,18 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
       }
     });
     return () => subscription.unsubscribe();
-  }, [form.watch, onCalculate, generateAmortizationSchedule]);
+  }, [form, onCalculate, generateAmortizationSchedule]);
 
   // Trigger initial calculation
   useEffect(() => {
-    const result = generateAmortizationSchedule(form.getValues());
-    if (result.data) {
-      onCalculate(result.data);
+    const values = form.getValues();
+    if(values.startDate) {
+      const result = generateAmortizationSchedule(values);
+      if (result.data) {
+        onCalculate(result.data);
+      }
     }
-  }, []);
+  }, [form.getValues().startDate]);
 
   return (
     <Card>
