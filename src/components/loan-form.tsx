@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Banknote, CalendarDays, Percent, Printer, MessageSquare, Calendar as CalendarIcon } from 'lucide-react'
 import { format } from 'date-fns'
 
-import { LoanSchema, type LoanFormValues, type AmortizationResult } from '@/lib/types'
+import { LoanSchema, type LoanFormValues } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
@@ -23,16 +23,15 @@ import { Textarea } from './ui/textarea'
 
 
 interface LoanFormProps {
-  onCalculate: (data: AmortizationResult | null, error?: string) => void;
+  onCalculate: (values: LoanFormValues) => void;
   currency: string;
   onCurrencyChange: (currency: string) => void;
-  generateAmortizationSchedule: (values: LoanFormValues) => { data?: AmortizationResult; error?: string };
   comments: string;
   onCommentsChange: (comments: string) => void;
   onPrint: () => void;
 }
 
-export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmortizationSchedule, comments, onCommentsChange, onPrint }: LoanFormProps) {
+export function LoanForm({ onCalculate, currency, onCurrencyChange, comments, onCommentsChange, onPrint }: LoanFormProps) {
   const form = useForm<LoanFormValues>({
     resolver: zodResolver(LoanSchema),
     defaultValues: {
@@ -51,27 +50,27 @@ export function LoanForm({ onCalculate, currency, onCurrencyChange, generateAmor
   }, [form.setValue]);
 
   useEffect(() => {
-    const subscription = form.watch((watchedValues) => {
-      const result = generateAmortizationSchedule(watchedValues as LoanFormValues);
-      if (result.error) {
-        onCalculate(null, result.error);
-      } else {
-        onCalculate(result.data ?? null);
+    const subscription = form.watch((watchedValues, { name, type }) => {
+      if (type === 'change') {
+        const validatedValues = LoanSchema.safeParse(watchedValues);
+        if (validatedValues.success) {
+          onCalculate(validatedValues.data);
+        }
       }
     });
     return () => subscription.unsubscribe();
-  }, [form, onCalculate, generateAmortizationSchedule]);
+  }, [form.watch, onCalculate]);
 
   // Trigger initial calculation
   useEffect(() => {
     const values = form.getValues();
     if(values.startDate) {
-      const result = generateAmortizationSchedule(values);
-      if (result.data) {
-        onCalculate(result.data);
+      const validatedValues = LoanSchema.safeParse(values);
+      if (validatedValues.success) {
+        onCalculate(validatedValues.data);
       }
     }
-  }, [form.getValues().startDate]);
+  }, [form, onCalculate]);
 
   return (
     <Card>

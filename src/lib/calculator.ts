@@ -1,9 +1,9 @@
-'use client'
+'use server'
 
 import { addMonths } from 'date-fns';
 import { LoanSchema, type LoanFormValues, type AmortizationResult, type ActionResult } from '@/lib/types';
 
-export function generateAmortizationSchedule(formData: LoanFormValues): ActionResult {
+export async function generateAmortizationSchedule(formData: LoanFormValues): Promise<ActionResult> {
   const validatedFields = LoanSchema.safeParse(formData);
 
   if (!validatedFields.success) {
