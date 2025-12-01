@@ -145,6 +145,8 @@ body {
   .no-print, 
   button, 
   [role="tablist"], 
+  header, /* Hide header in print */
+  .glass-card > div:first-child h2, 
   svg,
   /* Hide the specific toggle container in AmortizationSchedule */
   .space-y-4 > .flex.justify-between.items-center { 

@@ -4,4 +4,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: /sitemap.xml
+Sitemap: https://loanease.com/sitemap.xml
