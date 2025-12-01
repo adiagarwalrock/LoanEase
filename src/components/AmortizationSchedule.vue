@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, h } from 'vue'
-import { format } from 'date-fns'
+import { format } from 'date-fns/format'
 import { Maximize2 } from 'lucide-vue-next'
 import {
   useVueTable,

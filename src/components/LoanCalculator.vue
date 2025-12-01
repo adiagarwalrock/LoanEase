@@ -4,7 +4,7 @@ import type { AmortizationResult } from '@/lib/types'
 import LoanForm from './LoanForm.vue'
 import AmortizationDisplay from './AmortizationDisplay.vue'
 import { generateAmortizationSchedule } from '@/lib/calculator'
-import { format } from 'date-fns'
+import { format } from 'date-fns/format'
 
 const result = ref<AmortizationResult | null>(null)
 const currency = ref('USD')

@@ -2,7 +2,7 @@
 import { ref, watch, onMounted } from 'vue'
 import { Banknote, CalendarDays, Percent, MessageSquare, Calendar as CalendarIcon } from 'lucide-vue-next'
 import { LoanSchema, type LoanFormValues } from '@/lib/types'
-import { format } from 'date-fns'
+import { format } from 'date-fns/format'
 import { type DateValue, getLocalTimeZone, today } from '@internationalized/date'
 import { cn } from '@/lib/utils'
 import Button from '@/components/ui/button/Button.vue'

@@ -55,6 +55,21 @@ export default defineConfig({
             if (id.includes('vue') || id.includes('vue-router')) {
               return 'vendor-vue';
             }
+            if (id.includes('date-fns')) {
+              return 'vendor-date-fns';
+            }
+            if (id.includes('@internationalized/date')) {
+              return 'vendor-internationalized-date';
+            }
+            if (id.includes('@tanstack')) {
+              return 'vendor-tanstack';
+            }
+            if (id.includes('zod')) {
+              return 'vendor-zod';
+            }
+            if (id.includes('reka-ui') || id.includes('radix-vue')) {
+              return 'vendor-ui-primitives';
+            }
             if (id.includes('lucide-vue-next')) {
               return 'vendor-icons';
             }
