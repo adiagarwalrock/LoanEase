@@ -136,8 +136,8 @@ const table = useVueTable({
 </script>
 
 <template>
-  <div class="space-y-4">
-    <div class="flex justify-between items-center">
+  <div :class="['flex flex-col gap-4', heightClass ? 'h-full' : '']">
+    <div class="flex justify-between items-center shrink-0">
       <Tabs v-model="view" class="w-full sm:w-auto">
         <TabsList class="relative grid w-full grid-cols-2 sm:w-auto h-12 bg-muted p-1.5 rounded-full border">
           <div
@@ -170,9 +170,9 @@ const table = useVueTable({
       </Button>
     </div>
 
-    <div class="rounded-md border overflow-hidden">
-      <div :class="['overflow-y-auto', heightClass || 'max-h-96']">
-        <Table>
+    <div class="rounded-md border overflow-hidden" :class="heightClass ? 'flex-1 min-h-0' : ''">
+      <div :class="['overflow-y-auto overflow-x-auto', heightClass || 'max-h-96']">
+        <Table class="whitespace-nowrap">
           <TableHeader class="sticky top-0 bg-muted z-10">
             <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
               <TableHead v-for="header in headerGroup.headers" :key="header.id" :class="(header.column.columnDef.meta as any)?.class">

@@ -55,9 +55,6 @@ export default defineConfig({
             if (id.includes('vue') || id.includes('vue-router')) {
               return 'vendor-vue';
             }
-            if (id.includes('xlsx')) {
-              return 'vendor-xlsx';
-            }
             if (id.includes('lucide-vue-next')) {
               return 'vendor-icons';
             }

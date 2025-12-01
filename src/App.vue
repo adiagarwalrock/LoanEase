@@ -94,7 +94,7 @@ const showHelpModal = ref(false)
     </header>
 
     <!-- Main Content -->
-    <main class="container-custom py-12 relative z-10">
+    <main class="container-custom py-6 relative z-10">
       <RouterView />
 
       <!-- Footer -->
@@ -193,7 +193,7 @@ const showHelpModal = ref(false)
 <style>
 /* Container with custom padding */
 .container-custom {
-  max-width: 1280px;
+  max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;

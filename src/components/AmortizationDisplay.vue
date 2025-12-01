@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock, TrendingUp, X } from 'lucide-vue-next'
+import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock, TrendingUp, X, Printer, FileSpreadsheet } from 'lucide-vue-next'
 import type { AmortizationResult } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
 import Card from './ui/Card.vue'
@@ -16,6 +16,12 @@ const props = defineProps<{
   result: AmortizationResult | null
   currency: string
   comments: string
+}>()
+
+const emit = defineEmits<{
+  (e: 'expand'): void
+  (e: 'print'): void
+  (e: 'export-excel'): void
 }>()
 
 const reportDate = ref('')
@@ -55,7 +61,7 @@ const principalPaid = computed(() => props.result?.schedule.filter(e => e.paid).
 
       <CardContent class="space-y-6">
         <!-- Summary List -->
-        <div class="flex flex-col gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div class="flex items-center justify-between rounded-lg border p-4 bg-card text-card-foreground shadow-sm">
             <span class="text-sm font-medium flex items-center gap-2">
               <Receipt class="h-4 w-4 text-muted-foreground" />
@@ -114,19 +120,36 @@ const principalPaid = computed(() => props.result?.schedule.filter(e => e.paid).
 
         <AmortizationSchedule :result="result" :currency="currency" :show-expand="true" @expand="isExpanded = true" />
 
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Button @click="emit('print')" class="w-full">
+                Print PDF
+                <template #icon>
+                    <Printer class="h-4 w-4" />
+                </template>
+            </Button>
+            <Button @click="emit('export-excel')" class="w-full" variant="outline">
+                Export Excel
+                <template #icon>
+                    <FileSpreadsheet class="h-4 w-4" />
+                </template>
+            </Button>
+        </div>
       </CardContent>
 
       <Teleport to="body">
         <div v-if="isExpanded" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" @click="isExpanded = false">
-          <div class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-6xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg h-[90vh]" @click.stop>
-            <div class="flex items-center justify-between">
+          <div class="fixed left-[50%] top-[50%] z-50 flex flex-col w-[95vw] sm:w-full max-w-6xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-4 sm:p-6 shadow-lg duration-200 rounded-lg sm:rounded-lg h-[90vh]" @click.stop>
+            <div class="flex items-center justify-between flex-shrink-0">
               <h2 class="text-lg font-semibold">Amortization Schedule</h2>
               <Button variant="ghost" size="icon" @click="isExpanded = false">
                 <X class="h-4 w-4" />
                 <span class="sr-only">Close</span>
               </Button>
             </div>
-            <AmortizationSchedule :result="result" :currency="currency" height-class="h-[calc(90vh-100px)]" />
+            <div class="flex-1 min-h-0">
+              <AmortizationSchedule :result="result" :currency="currency" height-class="h-full" />
+            </div>
           </div>
         </div>
       </Teleport>

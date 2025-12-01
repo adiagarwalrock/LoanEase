@@ -4,7 +4,6 @@ import type { AmortizationResult } from '@/lib/types'
 import LoanForm from './LoanForm.vue'
 import AmortizationDisplay from './AmortizationDisplay.vue'
 import { generateAmortizationSchedule } from '@/lib/calculator'
-import * as XLSX from 'xlsx'
 import { format } from 'date-fns'
 
 const result = ref<AmortizationResult | null>(null)
@@ -27,8 +26,11 @@ const handlePrint = () => {
   window.print()
 }
 
-const handleExportExcel = () => {
+const handleExportExcel = async () => {
   if (!result.value) return
+
+  // Dynamically import xlsx only when needed
+  const XLSX = await import('xlsx')
 
   const data = result.value.schedule.map(entry => ({
     Month: entry.month,
@@ -48,16 +50,18 @@ const handleExportExcel = () => {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-    <!-- Left Column: Loan Form -->
-    <div class="no-print">
-      <div class="glass-card p-6">
-        <h2 class="text-xl font-semibold text-gray-900 mb-4">
-          Enter Your Information
-        </h2>
-        <p class="text-sm text-gray-600 mb-6">
-          Provide your loan parameters to calculate your repayment schedule.
-        </p>
+  <div class="flex flex-col gap-8">
+    <!-- Top Section: Loan Form -->
+    <div class="no-print w-full">
+      <div class="glass-card p-4 md:p-6">
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold text-gray-900">
+            Enter Your Information
+          </h2>
+          <p class="text-sm text-gray-600">
+            Provide your loan parameters to calculate your repayment schedule.
+          </p>
+        </div>
 
         <LoanForm
           :currency="currency"
@@ -71,8 +75,8 @@ const handleExportExcel = () => {
       </div>
     </div>
 
-    <!-- Right Column: Results -->
-    <div class="space-y-6">
+    <!-- Bottom Section: Results -->
+    <div class="space-y-6 w-full">
       <!-- Error Message -->
       <div v-if="error" class="glass-card p-4 bg-red-50/80 border-red-200">
         <p class="text-red-800 text-sm">
@@ -81,7 +85,7 @@ const handleExportExcel = () => {
       </div>
 
       <!-- Amortization Display -->
-      <div class="glass-card p-6">
+      <div class="glass-card p-4 md:p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-semibold text-gray-900">
             Loan Summary & Schedule
@@ -92,6 +96,8 @@ const handleExportExcel = () => {
           :result="result"
           :currency="currency"
           :comments="comments"
+          @print="handlePrint"
+          @export-excel="handleExportExcel"
         />
       </div>
     </div>
