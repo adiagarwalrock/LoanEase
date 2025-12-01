@@ -1,4 +1,3 @@
-'use server'
 
 import { addMonths } from 'date-fns';
 import { LoanSchema, type LoanFormValues, type AmortizationResult, type ActionResult } from '@/lib/types';

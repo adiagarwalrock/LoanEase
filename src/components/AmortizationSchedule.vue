@@ -142,7 +142,7 @@ const table = useVueTable({
         <TabsList class="relative grid w-full grid-cols-2 sm:w-auto h-12 bg-muted p-1.5 rounded-full border">
           <div
             :class="[
-              'absolute inset-y-1.5 rounded-full bg-primary shadow-sm transition-all duration-300 ease-[cubic-bezier(0.25,0.1,0.25,1.0)]',
+              'absolute inset-y-1.5 rounded-full bg-primary shadow-sm transition-all duration-300 ease-in-out',
               'w-[calc(50%-0.375rem)]',
               view === 'monthly' ? 'left-1.5' : 'left-[50%]'
             ]"
