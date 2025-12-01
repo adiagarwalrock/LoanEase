@@ -4,22 +4,21 @@
 LoanEase is a Next.js-based web application designed to calculate loan details. It provides users with tools to input loan parameters (principal, rate, duration), select interest types (simple/compound), and view detailed amortization schedules and payment summaries.
 
 ## Tech Stack
-- **Framework:** Next.js 15 (App Router)
+- **Framework:** Vite + Vue 3 (Composition API)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
-- **UI Components:** Radix UI primitives (via shadcn/ui pattern), Lucide React for icons
-- **State/Validation:** React Hook Form, Zod
-- **Visualization:** Recharts
-- **AI/Backend Integration:** Genkit
+- **UI Components:** shadcn-vue (built on Radix Vue primitives), Lucide Vue for icons
+- **Validation:** Zod
+- **Analytics:** Vercel Analytics, Speed Insights
 
 ## Directory Structure
-- `src/app/`: Next.js App Router pages and layouts.
-- `src/components/`: React components.
-  - `ui/`: Reusable UI components (buttons, inputs, etc.).
-  - `loan-*.tsx`: Domain-specific components for the loan calculator.
-- `src/lib/`: Utility functions, types, and constants.
-- `src/ai/`: Genkit configuration and AI flows.
-- `docs/`: Project documentation (blueprints).
+- `src/components/`: Vue components (*.vue files)
+  - `ui/`: shadcn-vue UI components (Button, Card, Input, etc.)
+  - `LoanCalculator.vue`, `LoanForm.vue`, `AmortizationDisplay.vue`: Domain components
+- `src/lib/`: Utility functions, types, and calculation logic
+- `src/App.vue`: Root Vue component
+- `src/main.ts`: Application entry point
+- `docs/`: Project documentation
 
 ## Key Features
 1.  **Loan Calculator:** Inputs for principal, interest rate, and duration.
@@ -40,11 +39,6 @@ The development server runs on port 9002.
 npm run dev
 ```
 
-### AI/Genkit Development
-To start the Genkit development environment:
-```bash
-npm run genkit:dev
-```
 
 ### Building for Production
 ```bash
@@ -52,12 +46,11 @@ npm run build
 ```
 
 ### Code Quality
-- **Linting:** `npm run lint`
-- **Type Checking:** `npm run typecheck`
+- **Type Checking:** `npm run build` (includes vue-tsc)
 
 ## Design System Guidelines
 - **Primary Color:** Deep Blue (`#3F51B5`)
 - **Background:** Light Gray (`#ECEFF1`)
 - **Accent:** Lighter Blue (`#5C6BC0`)
 - **Typography:** 'Inter' (Sans-serif)
-- **Layout:** Clean, tabular layouts for data; geometric icons for concepts.
+- **Layout:** Clean, tabular layouts for data; geometric icons for concepts. Minimal and uncluttered design.
