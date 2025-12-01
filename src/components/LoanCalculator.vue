@@ -27,26 +27,51 @@ const handlePrint = () => {
 </script>
 
 <template>
-  <div class="mx-auto grid w-full max-w-7xl items-start gap-6 p-4 md:grid-cols-2 md:p-8 lg:grid-cols-3 print-hidden">
-    <div class="flex flex-col gap-6 lg:col-span-1">
-      <LoanForm
-        :currency="currency"
-        :comments="comments"
-        @calculate="handleCalculation"
-        @update:currency="currency = $event"
-        @update:comments="comments = $event"
-        @print="handlePrint"
-      />
-    </div>
-    <div class="flex flex-col gap-6 lg:col-span-2">
-      <div v-if="error" class="rounded-lg border border-destructive bg-destructive/10 p-4 text-destructive">
-        <strong>Error:</strong> {{ error }}
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Left Column: Loan Form -->
+    <div>
+      <div class="glass-card p-6">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">
+          Enter Your Information
+        </h2>
+        <p class="text-sm text-gray-600 mb-6">
+          Provide your loan parameters to calculate your repayment schedule.
+        </p>
+
+        <LoanForm
+          :currency="currency"
+          :comments="comments"
+          @calculate="handleCalculation"
+          @update:currency="currency = $event"
+          @update:comments="comments = $event"
+          @print="handlePrint"
+        />
       </div>
-      <AmortizationDisplay
-        :result="result"
-        :currency="currency"
-        :comments="comments"
-      />
+    </div>
+
+    <!-- Right Column: Results -->
+    <div class="space-y-6">
+      <!-- Error Message -->
+      <div v-if="error" class="glass-card p-4 bg-red-50/80 border-red-200">
+        <p class="text-red-800 text-sm">
+          <strong>Error:</strong> {{ error }}
+        </p>
+      </div>
+
+      <!-- Amortization Display -->
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900">
+            Loan Summary & Schedule
+          </h2>
+        </div>
+
+        <AmortizationDisplay
+          :result="result"
+          :currency="currency"
+          :comments="comments"
+        />
+      </div>
     </div>
   </div>
 </template>
