@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import LoanCalculator from '@/components/LoanCalculator.vue'
+import Button from '@/components/ui/button/Button.vue'
 import { inject } from '@vercel/analytics'
 import { injectSpeedInsights } from '@vercel/speed-insights'
 import { ref } from 'vue'
@@ -72,20 +72,22 @@ const showHelpModal = ref(false)
               </svg>
               View on GitHub
             </a>
-            <button
-              class="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 bg-white/70 text-gray-700 hover:bg-white shadow-sm transition-colors"
+            <Button
+              variant="outline"
               @click="showHelpModal = true"
             >
-              <svg class="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
               Help
-            </button>
+              <template #icon>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </template>
+            </Button>
           </div>
         </div>
       </div>
@@ -93,7 +95,7 @@ const showHelpModal = ref(false)
 
     <!-- Main Content -->
     <main class="container-custom py-12 relative z-10">
-      <LoanCalculator />
+      <RouterView />
 
       <!-- Footer -->
       <div class="mt-12 text-center text-sm text-gray-600">
@@ -111,14 +113,15 @@ const showHelpModal = ref(false)
       <div class="glass-card max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-2xl font-bold text-gray-900">How to Use LoanEase</h2>
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             @click="showHelpModal = false"
-            class="text-gray-500 hover:text-gray-700 transition-colors"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
-          </button>
+          </Button>
         </div>
         <div class="space-y-6 text-sm leading-relaxed text-slate-700">
           <section>
@@ -176,12 +179,11 @@ const showHelpModal = ref(false)
         </div>
 
         <div class="flex justify-end mt-6">
-          <button
+          <Button
             @click="showHelpModal = false"
-            class="px-4 py-2 bg-sky-600 text-white rounded-lg font-medium hover:bg-sky-700 transition-colors shadow"
           >
             Got it
-          </button>
+          </Button>
         </div>
       </div>
     </div>

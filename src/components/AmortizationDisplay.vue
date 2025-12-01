@@ -9,7 +9,7 @@ import CardTitle from './ui/CardTitle.vue'
 import CardDescription from './ui/CardDescription.vue'
 import CardContent from './ui/CardContent.vue'
 import Separator from './ui/Separator.vue'
-import Button from './ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 import AmortizationSchedule from './AmortizationSchedule.vue'
 
 const props = defineProps<{

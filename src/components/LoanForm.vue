@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue'
-import { Banknote, CalendarDays, Percent, Printer, MessageSquare, Calendar } from 'lucide-vue-next'
+import { Banknote, CalendarDays, Percent, Printer, MessageSquare, Calendar as CalendarIcon, FileSpreadsheet } from 'lucide-vue-next'
 import { LoanSchema, type LoanFormValues } from '@/lib/types'
+import { format } from 'date-fns'
+import { type DateValue, getLocalTimeZone, today } from '@internationalized/date'
+import { cn } from '@/lib/utils'
 import Card from './ui/Card.vue'
 import CardHeader from './ui/CardHeader.vue'
 import CardTitle from './ui/CardTitle.vue'
 import CardDescription from './ui/CardDescription.vue'
 import CardContent from './ui/CardContent.vue'
-import Button from './ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
 import Input from './ui/Input.vue'
 import Label from './ui/Label.vue'
 import Select from './ui/Select.vue'
@@ -15,6 +18,8 @@ import Textarea from './ui/Textarea.vue'
 import Slider from './ui/Slider.vue'
 import Switch from './ui/Switch.vue'
 import Separator from './ui/Separator.vue'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Calendar } from '@/components/ui/calendar'
 
 const props = defineProps<{
   currency: string
@@ -26,13 +31,14 @@ const emit = defineEmits<{
   'update:currency': [value: string]
   'update:comments': [value: string]
   print: []
+  'export-excel': []
 }>()
 
 const principal = ref(100000)
 const interestRate = ref(5)
 const loanTerm = ref(30)
 const interestType = ref<'compound' | 'simple'>('compound')
-const startDate = ref(new Date().toISOString().split('T')[0])
+const startDate = ref<any>(today(getLocalTimeZone()))
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -42,7 +48,7 @@ const calculateSchedule = () => {
     interestRate: interestRate.value,
     loanTerm: loanTerm.value,
     interestType: interestType.value,
-    startDate: new Date(startDate.value),
+    startDate: startDate.value ? startDate.value.toDate(getLocalTimeZone()) : new Date(),
   }
 
   const result = LoanSchema.safeParse(values)
@@ -119,14 +125,23 @@ onMounted(() => {
       <!-- Start Date -->
       <div class="space-y-2">
         <Label>Loan Start Date</Label>
-        <div class="relative">
-          <Calendar class="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground z-10" />
-          <Input
-            v-model="startDate"
-            type="date"
-            class="pl-8"
-          />
-        </div>
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button
+              variant="outline"
+              :class="cn(
+                'w-full justify-start text-left font-normal flex items-center',
+                !startDate && 'text-muted-foreground',
+              )"
+            >
+              <CalendarIcon class="mr-2 h-4 w-4 opacity-50" />
+              <span class="whitespace-nowrap">{{ startDate ? format(startDate.toDate(getLocalTimeZone()), "PPP") : "Pick a date" }}</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent class="w-auto p-0">
+            <Calendar v-model="startDate" initial-focus />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <!-- Interest Type -->
@@ -170,11 +185,21 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Print Button -->
-      <Button @click="emit('print')" variant="outline" class="w-full">
-        <Printer class="mr-2 h-4 w-4" />
-        Print / Save as PDF
-      </Button>
+      <!-- Action Buttons -->
+      <div class="grid grid-cols-2 gap-4">
+        <Button @click="emit('print')" class="w-full">
+          Print PDF
+          <template #icon>
+            <Printer class="h-4 w-4" />
+          </template>
+        </Button>
+        <Button @click="emit('export-excel')" class="w-full" variant="outline">
+          Export Excel
+          <template #icon>
+            <FileSpreadsheet class="h-4 w-4" />
+          </template>
+        </Button>
+      </div>
     </CardContent>
   </Card>
 </template>

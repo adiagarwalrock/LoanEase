@@ -4,6 +4,8 @@ import type { AmortizationResult } from '@/lib/types'
 import LoanForm from './LoanForm.vue'
 import AmortizationDisplay from './AmortizationDisplay.vue'
 import { generateAmortizationSchedule } from '@/lib/calculator'
+import * as XLSX from 'xlsx'
+import { format } from 'date-fns'
 
 const result = ref<AmortizationResult | null>(null)
 const currency = ref('USD')
@@ -23,6 +25,25 @@ const handleCalculation = async (values: any) => {
 
 const handlePrint = () => {
   window.print()
+}
+
+const handleExportExcel = () => {
+  if (!result.value) return
+
+  const data = result.value.schedule.map(entry => ({
+    Month: entry.month,
+    Date: format(entry.paymentDate, 'MMM yyyy'),
+    Payment: entry.payment,
+    Principal: entry.principal,
+    Interest: entry.interest,
+    Balance: entry.balance,
+    Status: entry.paid ? 'Paid' : 'Pending'
+  }))
+
+  const ws = XLSX.utils.json_to_sheet(data)
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Schedule')
+  XLSX.writeFile(wb, 'Amortization_Schedule.xlsx')
 }
 </script>
 
@@ -45,6 +66,7 @@ const handlePrint = () => {
           @update:currency="currency = $event"
           @update:comments="comments = $event"
           @print="handlePrint"
+          @export-excel="handleExportExcel"
         />
       </div>
     </div>

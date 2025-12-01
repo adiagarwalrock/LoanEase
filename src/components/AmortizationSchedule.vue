@@ -1,14 +1,29 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, h } from 'vue'
 import { format } from 'date-fns'
 import { Maximize2 } from 'lucide-vue-next'
+import {
+  useVueTable,
+  getCoreRowModel,
+  FlexRender,
+  createColumnHelper,
+  type ColumnDef,
+} from '@tanstack/vue-table'
 import type { AmortizationResult, AmortizationEntry } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
 import Tabs from './ui/Tabs.vue'
 import TabsList from './ui/TabsList.vue'
 import TabsTrigger from './ui/TabsTrigger.vue'
 import Badge from './ui/Badge.vue'
-import Button from './ui/Button.vue'
+import Button from '@/components/ui/button/Button.vue'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 
 const props = defineProps<{
   result: AmortizationResult
@@ -47,6 +62,77 @@ const yearlySchedule = computed<YearlyEntry[]>(() => {
     return acc
   }, [])
 })
+
+const monthlyColumnHelper = createColumnHelper<AmortizationEntry>()
+const yearlyColumnHelper = createColumnHelper<YearlyEntry>()
+
+const monthlyColumns = computed(() => [
+  monthlyColumnHelper.accessor('month', {
+    header: 'Month',
+    cell: info => info.getValue(),
+    meta: { class: 'w-[80px]' }
+  }),
+  monthlyColumnHelper.accessor('paymentDate', {
+    header: 'Date',
+    cell: info => {
+      const date = format(info.getValue(), 'MMM yyyy')
+      const isPaid = info.row.original.paid
+      return h('div', { class: 'flex items-center gap-2' }, [
+        h('span', date),
+        isPaid ? h(Badge, { variant: 'secondary' }, () => 'Paid') : null
+      ])
+    },
+  }),
+  monthlyColumnHelper.accessor('payment', {
+    header: () => h('div', { class: 'text-right' }, 'Payment'),
+    cell: info => h('div', { class: 'text-right' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+  monthlyColumnHelper.accessor('principal', {
+    header: () => h('div', { class: 'text-right' }, 'Principal'),
+    cell: info => h('div', { class: 'text-right' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+  monthlyColumnHelper.accessor('interest', {
+    header: () => h('div', { class: 'text-right' }, 'Interest'),
+    cell: info => h('div', { class: 'text-right text-destructive/80' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+  monthlyColumnHelper.accessor('balance', {
+    header: () => h('div', { class: 'text-right' }, 'Balance'),
+    cell: info => h('div', { class: 'text-right font-medium' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+])
+
+const yearlyColumns = computed(() => [
+  yearlyColumnHelper.accessor('year', {
+    header: 'Year',
+    cell: info => info.getValue(),
+    meta: { class: 'w-[80px]' }
+  }),
+  yearlyColumnHelper.accessor('payment', {
+    header: () => h('div', { class: 'text-right' }, 'Total Payment'),
+    cell: info => h('div', { class: 'text-right' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+  yearlyColumnHelper.accessor('principal', {
+    header: () => h('div', { class: 'text-right' }, 'Principal'),
+    cell: info => h('div', { class: 'text-right' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+  yearlyColumnHelper.accessor('interest', {
+    header: () => h('div', { class: 'text-right' }, 'Interest'),
+    cell: info => h('div', { class: 'text-right text-destructive/80' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+  yearlyColumnHelper.accessor('balance', {
+    header: () => h('div', { class: 'text-right' }, 'Ending Balance'),
+    cell: info => h('div', { class: 'text-right font-medium' }, formatCurrency(info.getValue(), props.currency)),
+  }),
+])
+
+const columns = computed(() => view.value === 'monthly' ? monthlyColumns.value : yearlyColumns.value)
+const data = computed(() => view.value === 'monthly' ? props.result.schedule : yearlySchedule.value)
+
+const table = useVueTable({
+  get data() { return data.value },
+  get columns() { return columns.value as ColumnDef<AmortizationEntry | YearlyEntry>[] },
+  getCoreRowModel: getCoreRowModel(),
+})
 </script>
 
 <template>
@@ -76,57 +162,55 @@ const yearlySchedule = computed<YearlyEntry[]>(() => {
         </TabsList>
       </Tabs>
 
-      <Button v-if="showExpand" variant="outline" size="sm" @click="emit('expand')" class="gap-2 ml-4">
-        <Maximize2 class="h-4 w-4" />
+      <Button v-if="showExpand" size="sm" @click="emit('expand')" class="ml-4">
         Expand
+        <template #icon>
+          <Maximize2 class="h-4 w-4" />
+        </template>
       </Button>
     </div>
 
     <div class="rounded-md border overflow-hidden">
       <div :class="['overflow-y-auto', heightClass || 'max-h-96']">
-        <table v-if="view === 'monthly'" class="w-full text-sm">
-          <thead class="sticky top-0 bg-muted">
-            <tr class="border-b">
-              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[80px]">Month</th>
-              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Payment</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Principal</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Interest</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="entry in result.schedule" :key="entry.month" :class="['border-b transition-colors hover:bg-muted/50', entry.paid && 'bg-secondary/40']">
-              <td class="p-4 align-middle font-medium">{{ entry.month }}</td>
-              <td class="p-4 align-middle"><div class="flex items-center gap-2"><span>{{ format(entry.paymentDate, 'MMM yyyy') }}</span><Badge v-if="entry.paid" variant="secondary">Paid</Badge></div></td>
-              <td class="p-4 align-middle text-right">{{ formatCurrency(entry.payment, currency) }}</td>
-              <td class="p-4 align-middle text-right">{{ formatCurrency(entry.principal, currency) }}</td>
-              <td class="p-4 align-middle text-right text-destructive/80">{{ formatCurrency(entry.interest, currency) }}</td>
-              <td class="p-4 align-middle text-right font-medium">{{ formatCurrency(entry.balance, currency) }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <table v-else class="w-full text-sm">
-          <thead class="sticky top-0 bg-muted">
-            <tr class="border-b">
-              <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[80px]">Year</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Total Payment</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Principal</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Interest</th>
-              <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Ending Balance</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="entry in yearlySchedule" :key="entry.year" class="border-b transition-colors hover:bg-muted/50">
-              <td class="p-4 align-middle font-medium">{{ entry.year }}</td>
-              <td class="p-4 align-middle text-right">{{ formatCurrency(entry.payment, currency) }}</td>
-              <td class="p-4 align-middle text-right">{{ formatCurrency(entry.principal, currency) }}</td>
-              <td class="p-4 align-middle text-right text-destructive/80">{{ formatCurrency(entry.interest, currency) }}</td>
-              <td class="p-4 align-middle text-right font-medium">{{ formatCurrency(entry.balance, currency) }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <Table>
+          <TableHeader class="sticky top-0 bg-muted z-10">
+            <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+              <TableHead v-for="header in headerGroup.headers" :key="header.id" :class="(header.column.columnDef.meta as any)?.class">
+                <FlexRender
+                  v-if="!header.isPlaceholder"
+                  :render="header.column.columnDef.header"
+                  :props="header.getContext()"
+                />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <template v-if="table.getRowModel().rows?.length">
+              <TableRow
+                v-for="row in table.getRowModel().rows"
+                :key="row.id"
+                :data-state="row.getIsSelected() ? 'selected' : undefined"
+                :class="[
+                  'transition-colors hover:bg-muted/50', 
+                  // Use type assertion or check property existence safely if needed, 
+                  // but for 'paid' styling we need to access the original data.
+                  (row.original as any).paid ? 'bg-secondary/40' : '' 
+                ]"
+              >
+                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                  <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                </TableCell>
+              </TableRow>
+            </template>
+            <template v-else>
+              <TableRow>
+                <TableCell :colspan="columns.length" class="h-24 text-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            </template>
+          </TableBody>
+        </Table>
       </div>
     </div>
   </div>

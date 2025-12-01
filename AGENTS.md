@@ -49,8 +49,12 @@ npm run build
 - **Type Checking:** `npm run build` (includes vue-tsc)
 
 ## Design System Guidelines
-- **Primary Color:** Deep Blue (`#3F51B5`)
-- **Background:** Light Gray (`#ECEFF1`)
-- **Accent:** Lighter Blue (`#5C6BC0`)
-- **Typography:** 'Inter' (Sans-serif)
-- **Layout:** Clean, tabular layouts for data; geometric icons for concepts. Minimal and uncluttered design.
+
+- **Primary Color:** Soft Indigo (`#6366F1`)
+- **Background:** Soft Mesh Gradient (Lavender `#F3E8FF` top-left to Warm Cream `#FFF7ED` bottom-right)
+- **Surface:** White (`#FFFFFF`) cards with `rounded-xl` and subtle shadows (`shadow-sm`)
+- **Typography:** 'Inter' (Sans-serif). Headings bold, labels clear.
+- **Layout:**
+  - **Header:** Title with status badges ("Beta", "Student") and utility links.
+  - **Content:** Two-column grid. Left: Input forms (Loan Parameters). Right: Results summaries and visualizations.
+  - **Footer:** Centered disclaimer banner.
