@@ -12,6 +12,8 @@ import Input from './ui/Input.vue'
 import Label from './ui/Label.vue'
 import Select from './ui/Select.vue'
 import Textarea from './ui/Textarea.vue'
+import Slider from './ui/Slider.vue'
+import Switch from './ui/Switch.vue'
 import Separator from './ui/Separator.vue'
 
 const props = defineProps<{
@@ -51,7 +53,7 @@ const calculateSchedule = () => {
 
 const debouncedCalculate = () => {
   if (debounceTimer) clearTimeout(debounceTimer)
-  debounceTimer = setTimeout(calculateSchedule, 300)
+  debounceTimer = setTimeout(calculateSchedule, 500)
 }
 
 watch([principal, interestRate, loanTerm, interestType, startDate], debouncedCalculate)
@@ -100,18 +102,18 @@ onMounted(() => {
       </div>
 
       <!-- Loan Term -->
-      <div class="space-y-2">
-        <Label>Loan Term (Years): {{ loanTerm }}</Label>
-        <div class="relative flex items-center">
-          <CalendarDays class="absolute left-2.5 h-4 w-4 text-muted-foreground z-10" />
-          <input
-            v-model.number="loanTerm"
-            type="range"
-            min="1"
-            max="40"
-            class="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer pl-8"
-          />
-        </div>
+      <div class="space-y-4">
+        <Label class="flex items-center gap-2">
+          <CalendarDays class="h-4 w-4 text-muted-foreground" />
+          Loan Term (Years): {{ loanTerm }}
+        </Label>
+        <Slider
+          :model-value="[loanTerm]"
+          @update:model-value="(v) => { if (v?.[0]) loanTerm = v[0] }"
+          :min="1"
+          :max="40"
+          :step="1"
+        />
       </div>
 
       <!-- Start Date -->
@@ -130,25 +132,13 @@ onMounted(() => {
       <!-- Interest Type -->
       <div class="space-y-2">
         <Label>Interest Type</Label>
-        <div class="flex gap-4">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              v-model="interestType"
-              type="radio"
-              value="compound"
-              class="w-4 h-4 text-primary bg-background border-input focus:ring-2 focus:ring-primary"
-            />
-            <span class="text-sm">Compound</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              v-model="interestType"
-              type="radio"
-              value="simple"
-              class="w-4 h-4 text-primary bg-background border-input focus:ring-2 focus:ring-primary"
-            />
-            <span class="text-sm">Simple</span>
-          </label>
+        <div class="flex items-center gap-3">
+          <span :class="['text-sm transition-colors', interestType === 'simple' ? 'text-foreground font-medium' : 'text-muted-foreground']">Simple</span>
+          <Switch
+            :checked="interestType === 'compound'"
+            @update:checked="(checked) => interestType = checked ? 'compound' : 'simple'"
+          />
+          <span :class="['text-sm transition-colors', interestType === 'compound' ? 'text-foreground font-medium' : 'text-muted-foreground']">Compound</span>
         </div>
       </div>
 
@@ -188,30 +178,3 @@ onMounted(() => {
     </CardContent>
   </Card>
 </template>
-
-<style scoped>
-/* Custom range slider styling */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: hsl(var(--primary));
-  cursor: pointer;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: hsl(var(--primary));
-  cursor: pointer;
-  border: none;
-}
-</style>

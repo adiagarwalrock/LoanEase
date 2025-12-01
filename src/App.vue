@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import LoanCalculator from '@/components/LoanCalculator.vue'
 import { inject } from '@vercel/analytics'
 import { injectSpeedInsights } from '@vercel/speed-insights'
 import { ref } from 'vue'
-import LoanCalculator from '@/components/LoanCalculator.vue'
 
 // Initialize analytics on component mount
 inject()
@@ -248,5 +248,25 @@ const showHelpModal = ref(false)
     size: auto;
     margin: 20mm;
   }
+}
+/* Fix for large currency amounts in summary cards */
+/* Ensures text wraps and doesn't get cut off when numbers are large */
+main [class*="text-3xl"],
+main [class*="text-4xl"],
+main [class*="text-5xl"] {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+  line-height: 1.2;
+  padding-bottom: 0.1em;
+  /* Prevent descenders from being cut off */
+  height: auto;
+  /* Ensure height grows with content */
+}
+
+/* Specific fix for the card layout to allow expansion */
+main .grid>div {
+  min-width: 0;
+  /* Allows flex/grid children to shrink below content size if needed to force wrap */
 }
 </style>

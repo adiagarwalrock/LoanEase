@@ -29,7 +29,7 @@ const handlePrint = () => {
 <template>
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <!-- Left Column: Loan Form -->
-    <div>
+    <div class="no-print">
       <div class="glass-card p-6">
         <h2 class="text-xl font-semibold text-gray-900 mb-4">
           Enter Your Information

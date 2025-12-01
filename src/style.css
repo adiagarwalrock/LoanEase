@@ -8,73 +8,48 @@ body {
 
 @layer base {
   :root {
-    --background: 210 17% 95%;
-    --foreground: 224 71% 4%;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
-    --primary: 231 60% 48%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 210 16% 90%;
-    --secondary-foreground: 224 71% 4%;
-    --muted: 210 16% 90%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 233 46% 56%;
-    --accent-foreground: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
-    --ring: 231 60% 48%;
-    --chart-1: 231 60% 48%;
-    --chart-2: 233 46% 56%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
     --radius: 0.5rem;
-    --sidebar-background: 210 17% 95%;
-    --sidebar-foreground: 224 71% 4%;
-    --sidebar-primary: 231 60% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 16% 90%;
-    --sidebar-accent-foreground: 224 71% 4%;
-    --sidebar-border: 210 20% 88%;
-    --sidebar-ring: 231 60% 48%;
   }
+
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 210 17% 95%;
-    --card: 224 71% 4%;
-    --card-foreground: 210 17% 95%;
-    --popover: 224 71% 4%;
-    --popover-foreground: 210 17% 95%;
-    --primary: 231 60% 48%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 224 71% 10%;
-    --secondary-foreground: 210 17% 95%;
-    --muted: 224 71% 10%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 233 46% 56%;
-    --accent-foreground: 0 0% 100%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 224 71% 10%;
-    --input: 224 71% 10%;
-    --ring: 231 60% 48%;
-    --chart-1: 231 60% 48%;
-    --chart-2: 233 46% 56%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 224 71% 4%;
-    --sidebar-foreground: 210 17% 95%;
-    --sidebar-primary: 231 60% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 224 71% 10%;
-    --sidebar-accent-foreground: 210 17% 95%;
-    --sidebar-border: 224 71% 10%;
-    --sidebar-ring: 231 60% 48%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
@@ -87,55 +62,229 @@ body {
   }
 }
 
-@media print {
-  body {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
   }
-  .print-only {
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@page {
+  margin: 0.5cm;
+  size: auto;
+}
+
+@media print {
+  /* Reset & Hide */
+  *, *::before, *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .no-print, 
+  button, 
+  [role="tablist"], 
+  svg,
+  /* Hide the specific toggle container in AmortizationSchedule */
+  .space-y-4 > .flex.justify-between.items-center { 
+    display: none !important; 
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-size: 9pt;
+    line-height: 1.1;
+  }
+
+  /* Layout Resets */
+  .lg\:grid-cols-2, .grid {
     display: block !important;
   }
-  .print-hidden {
-    display: none !important;
+
+  .w-full, .max-w-6xl {
+    width: 100% !important;
+    max-width: none !important;
   }
-  body > *:not(.print-only) {
-    display: none !important;
+
+  .glass-card {
+    padding: 0 !important;
+    border: none !important;
+    margin: 0 !important;
   }
-  .print-container {
-    padding: 1rem;
-    --card-foreground: black;
-    --muted-foreground: #333;
-    --destructive: #c00;
+
+  /* Summary Section - Dense horizontal row */
+  .flex.flex-col.gap-3 {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 1.5rem !important;
+    margin-bottom: 0.5rem !important;
+    border-bottom: 1px solid #000;
+    padding-bottom: 0.5rem;
   }
-  .print-container .text-destructive\/80 {
-    color: var(--destructive);
+
+  .flex.flex-col.gap-3 > div {
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    flex: 0 0 auto;
+    display: flex !important;
+    align-items: baseline !important;
+    gap: 0.5rem !important;
   }
-  .print-container .flex-wrap {
-    flex-wrap: nowrap;
+  
+  /* Label */
+  .flex.flex-col.gap-3 > div > span:first-child {
+    font-size: 8pt !important;
+    font-weight: normal !important;
+    color: #444 !important;
   }
-  .print-container [class*="gap-"] {
-    gap: 0.5rem;
+  /* Value */
+  .flex.flex-col.gap-3 > div > span:last-child {
+    font-size: 10pt !important;
+    font-weight: bold !important;
   }
-  .print-container .p-6 {
-    padding: 1rem;
+
+  /* Comments / Date Section */
+  .space-y-2 {
+    margin-bottom: 0.25rem !important;
   }
-  .print-container .pb-2 {
-    padding-bottom: 0.25rem;
+  .space-y-2 h3 {
+    font-size: 8pt !important;
+    display: inline-block;
+    margin-right: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
-  .print-container .h-96 {
+  .space-y-2 p {
+    display: inline;
+    font-size: 9pt !important;
+  }
+  .whitespace-pre-wrap {
+    white-space: normal !important;
+  }
+
+  /* Table Optimization */
+  .overflow-y-auto, .max-h-96 {
     height: auto !important;
-    overflow-y: visible !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
-  .print-container .border {
-    border: 0;
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    font-size: 8pt !important;
   }
-  .print-container .sticky {
-    position: static;
+
+  thead {
+    display: table-header-group;
+    border-bottom: 1px solid #000;
   }
-  .print-container .p-4 {
-    padding: 0.25rem 0.5rem;
+
+  tbody {
+    display: table-row-group;
   }
-  .print-container .h-12 {
-    height: auto;
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+    border-bottom: 1px solid #eee;
+  }
+
+  th, td {
+    padding: 2px 0 !important; /* Minimized horizontal padding */
+    text-align: right !important;
+  }
+  
+  th:first-child, td:first-child,
+  th:nth-child(2), td:nth-child(2) {
+    text-align: left !important;
+    padding-right: 8px !important;
+  }
+
+  /* Headers */
+  h2, h3, h4 {
+    margin-top: 0 !important;
+    margin-bottom: 0.25rem !important;
+    color: #000 !important;
+  }
+
+  /* Hide spacers/separators */
+  .separator, hr {
+    display: none !important;
+  }
+
+  /* Remove gaps */
+  .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.25rem !important;
+  }
+  
+  .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0 !important;
   }
 }

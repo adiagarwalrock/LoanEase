@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock, TrendingUp } from 'lucide-vue-next'
-import { format } from 'date-fns'
-import type { AmortizationResult, AmortizationEntry } from '@/lib/types'
+import { Calculator, Landmark, PiggyBank, Receipt, MessageSquare, CalendarClock, TrendingUp, X } from 'lucide-vue-next'
+import type { AmortizationResult } from '@/lib/types'
 import { formatCurrency } from '@/lib/utils'
 import Card from './ui/Card.vue'
 import CardHeader from './ui/CardHeader.vue'
 import CardTitle from './ui/CardTitle.vue'
 import CardDescription from './ui/CardDescription.vue'
 import CardContent from './ui/CardContent.vue'
-import Tabs from './ui/Tabs.vue'
-import TabsList from './ui/TabsList.vue'
-import TabsTrigger from './ui/TabsTrigger.vue'
 import Separator from './ui/Separator.vue'
-import Badge from './ui/Badge.vue'
+import Button from './ui/Button.vue'
+import AmortizationSchedule from './AmortizationSchedule.vue'
 
 const props = defineProps<{
   result: AmortizationResult | null
@@ -21,40 +18,14 @@ const props = defineProps<{
   comments: string
 }>()
 
-const view = ref('monthly')
 const reportDate = ref('')
+const isExpanded = ref(false)
 
 watch(() => props.result, () => {
   reportDate.value = new Date().toLocaleString()
 }, { immediate: true })
 
-interface YearlyEntry {
-  year: number
-  payment: number
-  principal: number
-  interest: number
-  balance: number
-}
-
-const yearlySchedule = computed<YearlyEntry[]>(() => {
-  if (!props.result) return []
-  return props.result.schedule.reduce((acc: YearlyEntry[], entry: AmortizationEntry) => {
-    const year = Math.ceil(entry.month / 12)
-    let yearEntry = acc.find(e => e.year === year)
-    if (!yearEntry) {
-      yearEntry = { year, payment: 0, principal: 0, interest: 0, balance: 0 }
-      acc.push(yearEntry)
-    }
-    yearEntry.payment += entry.payment
-    yearEntry.principal += entry.principal
-    yearEntry.interest += entry.interest
-    yearEntry.balance = entry.balance
-    return acc
-  }, [])
-})
-
 const principalPaid = computed(() => props.result?.schedule.filter(e => e.paid).reduce((acc, e) => acc + e.principal, 0) ?? 0)
-const interestPaid = computed(() => props.result?.schedule.filter(e => e.paid).reduce((acc, e) => acc + e.interest, 0) ?? 0)
 </script>
 
 <template>
@@ -79,21 +50,51 @@ const interestPaid = computed(() => props.result?.schedule.filter(e => e.paid).r
             <CardTitle>Amortization Results</CardTitle>
             <CardDescription>A detailed breakdown of your loan payments over time.</CardDescription>
           </div>
-          <Tabs v-model="view" class="print-hidden">
-            <TabsList>
-              <TabsTrigger value="monthly">Monthly</TabsTrigger>
-              <TabsTrigger value="yearly">Yearly</TabsTrigger>
-            </TabsList>
-          </Tabs>
         </div>
       </CardHeader>
 
       <CardContent class="space-y-6">
-        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card><CardContent class="pt-6"><div class="flex items-center justify-between pb-2"><h4 class="text-sm font-medium">Monthly Payment</h4><Receipt class="h-4 w-4 text-muted-foreground" /></div><div class="text-2xl font-bold">{{ formatCurrency(result.monthlyPayment, currency) }}</div></CardContent></Card>
-          <Card><CardContent class="pt-6"><div class="flex items-center justify-between pb-2"><h4 class="text-sm font-medium">Total Interest</h4><PiggyBank class="h-4 w-4 text-muted-foreground" /></div><div class="text-2xl font-bold">{{ formatCurrency(result.totalInterest, currency) }}</div></CardContent></Card>
-          <Card><CardContent class="pt-6"><div class="flex items-center justify-between pb-2"><h4 class="text-sm font-medium">Total Cost</h4><Landmark class="h-4 w-4 text-muted-foreground" /></div><div class="text-2xl font-bold">{{ formatCurrency(result.totalPayment, currency) }}</div></CardContent></Card>
-          <Card><CardContent class="pt-6"><div class="flex items-center justify-between pb-2"><h4 class="text-sm font-medium">Principal Paid</h4><TrendingUp class="h-4 w-4 text-muted-foreground" /></div><div class="text-2xl font-bold">{{ formatCurrency(principalPaid, currency) }}</div></CardContent></Card>
+        <!-- Summary List -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between rounded-lg border p-4 bg-card text-card-foreground shadow-sm">
+            <span class="text-sm font-medium flex items-center gap-2">
+              <Receipt class="h-4 w-4 text-muted-foreground" />
+              Monthly Payment
+            </span>
+            <span class="text-sm font-bold" :title="formatCurrency(result.monthlyPayment, currency)">
+              {{ formatCurrency(result.monthlyPayment, currency) }}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between rounded-lg border p-4 bg-card text-card-foreground shadow-sm">
+            <span class="text-sm font-medium flex items-center gap-2">
+              <PiggyBank class="h-4 w-4 text-muted-foreground" />
+              Total Interest
+            </span>
+            <span class="text-sm font-bold" :title="formatCurrency(result.totalInterest, currency)">
+              {{ formatCurrency(result.totalInterest, currency) }}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between rounded-lg border p-4 bg-card text-card-foreground shadow-sm">
+            <span class="text-sm font-medium flex items-center gap-2">
+              <Landmark class="h-4 w-4 text-muted-foreground" />
+              Total Cost
+            </span>
+            <span class="text-sm font-bold" :title="formatCurrency(result.totalPayment, currency)">
+              {{ formatCurrency(result.totalPayment, currency) }}
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between rounded-lg border p-4 bg-card text-card-foreground shadow-sm">
+            <span class="text-sm font-medium flex items-center gap-2">
+              <TrendingUp class="h-4 w-4 text-muted-foreground" />
+              Principal Paid
+            </span>
+            <span class="text-sm font-bold" :title="formatCurrency(principalPaid, currency)">
+              {{ formatCurrency(principalPaid, currency) }}
+            </span>
+          </div>
         </div>
 
         <Separator />
@@ -111,54 +112,24 @@ const interestPaid = computed(() => props.result?.schedule.filter(e => e.paid).r
 
         <Separator />
 
-        <div class="rounded-md border overflow-hidden">
-          <div class="max-h-96 overflow-y-auto">
-            <table v-if="view === 'monthly'" class="w-full text-sm">
-              <thead class="sticky top-0 bg-muted">
-                <tr class="border-b">
-                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[80px]">Month</th>
-                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Date</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Payment</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Principal</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Interest</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Balance</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="entry in result.schedule" :key="entry.month" :class="['border-b transition-colors hover:bg-muted/50', entry.paid && 'bg-secondary/40']">
-                  <td class="p-4 align-middle font-medium">{{ entry.month }}</td>
-                  <td class="p-4 align-middle"><div class="flex items-center gap-2"><span>{{ format(entry.paymentDate, 'MMM yyyy') }}</span><Badge v-if="entry.paid" variant="secondary">Paid</Badge></div></td>
-                  <td class="p-4 align-middle text-right">{{ formatCurrency(entry.payment, currency) }}</td>
-                  <td class="p-4 align-middle text-right">{{ formatCurrency(entry.principal, currency) }}</td>
-                  <td class="p-4 align-middle text-right text-destructive/80">{{ formatCurrency(entry.interest, currency) }}</td>
-                  <td class="p-4 align-middle text-right font-medium">{{ formatCurrency(entry.balance, currency) }}</td>
-                </tr>
-              </tbody>
-            </table>
+        <AmortizationSchedule :result="result" :currency="currency" :show-expand="true" @expand="isExpanded = true" />
 
-            <table v-else class="w-full text-sm">
-              <thead class="sticky top-0 bg-muted">
-                <tr class="border-b">
-                  <th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[80px]">Year</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Total Payment</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Principal</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Interest</th>
-                  <th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground">Ending Balance</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="entry in yearlySchedule" :key="entry.year" class="border-b transition-colors hover:bg-muted/50">
-                  <td class="p-4 align-middle font-medium">{{ entry.year }}</td>
-                  <td class="p-4 align-middle text-right">{{ formatCurrency(entry.payment, currency) }}</td>
-                  <td class="p-4 align-middle text-right">{{ formatCurrency(entry.principal, currency) }}</td>
-                  <td class="p-4 align-middle text-right text-destructive/80">{{ formatCurrency(entry.interest, currency) }}</td>
-                  <td class="p-4 align-middle text-right font-medium">{{ formatCurrency(entry.balance, currency) }}</td>
-                </tr>
-              </tbody>
-            </table>
+      </CardContent>
+
+      <Teleport to="body">
+        <div v-if="isExpanded" class="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm" @click="isExpanded = false">
+          <div class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-6xl translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg h-[90vh]" @click.stop>
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold">Amortization Schedule</h2>
+              <Button variant="ghost" size="icon" @click="isExpanded = false">
+                <X class="h-4 w-4" />
+                <span class="sr-only">Close</span>
+              </Button>
+            </div>
+            <AmortizationSchedule :result="result" :currency="currency" height-class="h-[calc(90vh-100px)]" />
           </div>
         </div>
-      </CardContent>
+      </Teleport>
     </template>
   </Card>
 </template>
